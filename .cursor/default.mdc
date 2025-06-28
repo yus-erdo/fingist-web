@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Shadcn
+Always use shadcn installs in the following format: `npx shadcn add button`
