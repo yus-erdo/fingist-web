@@ -225,7 +225,7 @@ export default function Home() {
             </div>
 
             <p className={`text-lg sm:text-xl mb-8 ${theme.bodyTextColor} max-w-2xl mx-auto leading-relaxed`}>
-              Binlerce finansal kaynağı takip ediyoruz, sizin için önemli olanları seçip günlük bültene dönüştürüyoruz. Gürültü yok, sadece önemli bilgiler.
+              Binlerce finansal kaynağı takip ediyoruz, sizin için önemli olanları seçip günlük bültene dönüştürüyoruz. Bilgi kirliliği yok, sadece önemli bilgiler.
             </p>
 
             {/* AI Features */}
@@ -327,7 +327,7 @@ export default function Home() {
                 </div>
                 <h3 className={`font-semibold ${theme.titleColor} mb-2`}>İçerik Seçimi</h3>
                 <p className={`text-sm ${theme.bodyTextColor}`}>
-                  Piyasa için gerçekten önemli olan haberleri ayıklayarak gürültüyü filtreliyoruz
+                  Piyasa için gerçekten önemli olan haberleri ayıklayarak bilgi kirliliğini filtreliyoruz
                 </p>
               </div>
               <div className="text-center" id="ai-step-4">

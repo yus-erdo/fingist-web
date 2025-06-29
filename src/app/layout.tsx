@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'FinGist - Günlük Finansal AI Bülteni',
-    description: 'Binlerce finansal kaynağı takip ediyoruz, sizin için önemli olanları seçip günlük bültene dönüştürüyoruz. Gürültü yok, sadece önemli bilgiler.',
+    description: 'FinGist, binlerce finansal kaynağı yapay zekâ ile tarar, yalnızca kritik bilgileri seçer ve her sabah kısa, anlaşılır bir bülten olarak sunar. 12.000\'den fazla akıllı yatırımcıya katılın; bilgi kirliliğini atlayın, piyasayı net görün.',
     url: 'https://fingist.com',
     siteName: 'FinGist',
     locale: 'tr_TR',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'FinGist - Günlük Finansal AI Bülteni',
-    description: 'Binlerce finansal kaynağı takip ediyoruz, sizin için önemli olanları seçip günlük bültene dönüştürüyoruz.',
+    description: 'FinGist, binlerce finansal kaynağı yapay zekâ ile tarar, yalnızca kritik bilgileri seçer ve her sabah kısa, anlaşılır bir bülten olarak sunar. 12.000\'den fazla akıllı yatırımcıya katılın; bilgi kirliliğini atlayın, piyasayı net görün.',
     creator: '@fingist',
   },
   robots: {
