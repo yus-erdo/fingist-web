@@ -15,23 +15,20 @@ CREATE INDEX idx_email_subscriptions_email ON email_subscriptions(email);
 CREATE INDEX idx_email_subscriptions_active ON email_subscriptions(is_active);
 CREATE INDEX idx_email_subscriptions_created_at ON email_subscriptions(created_at);
 
--- Add RLS (Row Level Security) policies if needed
+-- Add RLS (Row Level Security) policies
 ALTER TABLE email_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Policy to allow inserting new subscriptions (public access for newsletter signup)
-CREATE POLICY "Allow insert for email subscriptions" ON email_subscriptions
+CREATE POLICY "Allow public email subscription inserts" ON email_subscriptions
   FOR INSERT 
+  TO public
   WITH CHECK (true);
 
--- Policy to allow reading active subscriptions (you might want to restrict this)
-CREATE POLICY "Allow read for active subscriptions" ON email_subscriptions
+-- Policy to allow reading active subscriptions
+CREATE POLICY "Allow public read for active subscriptions" ON email_subscriptions
   FOR SELECT 
+  TO public
   USING (is_active = true);
-
--- Policy to allow updating subscriptions (for unsubscribe functionality)
-CREATE POLICY "Allow update for email subscriptions" ON email_subscriptions
-  FOR UPDATE 
-  USING (true);
 
 -- Trigger to automatically update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
