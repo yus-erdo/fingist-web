@@ -156,17 +156,17 @@ export default function Home() {
               <div className="bg-white/80 dark:bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-white/10" id="ai-feature-comprehensive">
                 <div className="text-2xl mb-2">📚</div>
                 <h3 className={`font-semibold ${theme.titleColor} mb-1`}>Kapsamlı Takip</h3>
-                <p className={`text-sm ${theme.bodyTextColor}`}>Yüzlerce kaynaktan önemli haberleri derleriz</p>
+                <p className={`text-sm ${theme.bodyTextColor}`}>Yüzlerce kaynaktan önemli özetleri okuyun</p>
               </div>
               <div className="bg-white/80 dark:bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-white/10" id="ai-feature-curated">
                 <div className="text-2xl mb-2">✨</div>
                 <h3 className={`font-semibold ${theme.titleColor} mb-1`}>Özenle Seçilmiş</h3>
-                <p className={`text-sm ${theme.bodyTextColor}`}>Gereksiz bilgi kirliliği olmadan, sadece önemlisi</p>
+                <p className={`text-sm ${theme.bodyTextColor}`}>Gereksiz bilgi kirliliği olmadan bilgilenin</p>
               </div>
               <div className="bg-white/80 dark:bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-white/10" id="ai-feature-daily">
                 <div className="text-2xl mb-2">⏰</div>
-                <h3 className={`font-semibold ${theme.titleColor} mb-1`}>Her Sabah</h3>
-                <p className={`text-sm ${theme.bodyTextColor}`}>Düzenli ve güvenilir, her gün aynı saatte</p>
+                <h3 className={`font-semibold ${theme.titleColor} mb-1`}>Her Gün</h3>
+                <p className={`text-sm ${theme.bodyTextColor}`}>Düzenli olarak her gün haberdar olun</p>
               </div>
             </div>
 
@@ -197,7 +197,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-2 mt-4">
                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
                 <p className={`text-sm ${theme.bodyTextColor}`}>
-                  Özenle hazırlanmış • Günlük • Ücretsiz
+                  AI • Günlük • Ücretsiz
                 </p>
               </div>
             </div>
@@ -250,10 +250,10 @@ export default function Home() {
         <section className={`relative z-10 py-20 px-4 sm:px-6 lg:px-8 ${theme.heroGradient}`}>
           <div className="max-w-4xl mx-auto">
             <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${theme.titleColor}`}>
-              Örnek Bültenler
+              Geçmiş Bültenler
             </h2>
             <p className={`text-center ${theme.bodyTextColor} mb-16`}>
-              Geçmiş bültenlerimizden örnekler. Her sabah böyle bir özet e-postanızda olacak.
+              Her gün böyle bir özet e-postanızda olacak.
             </p>
             
             <div className="grid gap-6 md:gap-8">
@@ -339,7 +339,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-2 mt-4">
                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
                 <p className={`text-sm ${theme.bodyTextColor}`}>
-                  Özenle hazırlanmış • Günlük • Ücretsiz
+                  AI • Günlük • Ücretsiz
                 </p>
               </div>
             </div>
