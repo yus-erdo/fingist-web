@@ -5,7 +5,8 @@ import RotatingText from "@/components/ui/rotatingText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEmailSubscription } from "@/hooks/useEmailSubscription";
-import { FormEvent, useRef } from "react";
+import { FormEvent, useRef, useEffect } from "react";
+import confetti from 'canvas-confetti';
 
 const themes = {
   blue: {
@@ -115,6 +116,54 @@ export default function Home() {
     const email = formData.get('email') as string;
     await subscribe(email, 'bottom');
   };
+
+  useEffect(() => {
+    if (messageType === 'success') {
+      // Fire multiple confetti bursts for a more dramatic effect
+      const duration = 3000; // 3 seconds
+      const animationEnd = Date.now() + duration;
+      
+      const randomInRange = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          return;
+        }
+
+        const particleCount = 150 * (timeLeft / duration);
+        
+        // Launch confetti from multiple positions
+        confetti({
+          particleCount: Math.floor(particleCount),
+          startVelocity: 30,
+          spread: 360,
+          scalar: 1.2, // Larger confetti pieces
+          ticks: 200, // How long particles stay visible
+          origin: {
+            x: randomInRange(0.1, 0.3),
+            y: Math.random() - 0.2
+          }
+        });
+        
+        confetti({
+          particleCount: Math.floor(particleCount),
+          startVelocity: 30,
+          spread: 360,
+          scalar: 1.2,
+          ticks: 200,
+          origin: {
+            x: randomInRange(0.7, 0.9),
+            y: Math.random() - 0.2
+          }
+        });
+      }, 250);
+    }
+  }, [messageType]);
 
   return (
     <>
