@@ -5,6 +5,7 @@ import RotatingText from "@/components/ui/rotatingText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEmailSubscription } from "@/hooks/useEmailSubscription";
+import { useNewsletterContent } from "@/hooks/useNewsletterContent";
 import { FormEvent, useRef, useEffect } from "react";
 import confetti from 'canvas-confetti';
 
@@ -97,6 +98,9 @@ export default function Home() {
   
   // Email subscription hook
   const { isLoading, message, messageType, subscribe, clearMessage } = useEmailSubscription();
+  
+  // Newsletter content hook
+  const { newsletters, isLoading: newslettersLoading, error: newslettersError } = useNewsletterContent();
   
   // Form refs
   const mainFormRef = useRef<HTMLFormElement>(null);
@@ -347,60 +351,67 @@ export default function Home() {
             </p>
             
             <div className="grid gap-6 md:gap-8">
-              {/* Sample Past Issues */}
-              {[
-                {
-                  date: "15 Ocak 2024",
-                  title: "Fed Politikası ve Teknoloji Hisselerindeki Etkileri",
-                  summary: "Fed'in faiz açıklamalarının teknoloji sektörü üzerindeki etkilerini analiz ettik. Apple, Microsoft ve Google'ın son haftalardaki performansları ve önümüzdeki dönem beklentileri.",
-                  tags: ["Fed Politikası", "Teknoloji", "Faiz"]
-                },
-                {
-                  date: "14 Ocak 2024", 
-                  title: "Döviz Piyasalarında Dikkat Çeken Hareketler",
-                  summary: "Merkez bankalarının son açıklamalarının ardından döviz kurlarında yaşanan değişimler. EUR/USD, USD/TRY ve GBP/USD paritelerindeki gelişmeler ve anlamları.",
-                  tags: ["Döviz", "Merkez Bankaları", "Pariteler"]
-                },
-                {
-                  date: "13 Ocak 2024",
-                  title: "Enerji Sektöründe Hareketlilik ve Emtia Fiyatları",
-                  summary: "Petrol fiyatlarındaki dalgalanmaların enerji şirketleri üzerindeki etkileri. Shell, Exxon ve yerel enerji şirketlerinin durumu ve sektör görünümü.",
-                  tags: ["Enerji", "Emtia", "Petrol"]
-                }
-              ].map((issue, index) => (
-                <article 
-                  key={index}
-                  className={`${theme.cardBorder} ${theme.cardBg} border rounded-xl p-6 hover:shadow-lg transition-shadow duration-300`}
-                  id={`ai-issue-${index + 1}`}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-                    <time className={`text-sm font-medium ${theme.dateColor}`}>
-                      {issue.date}
-                    </time>
-                    <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                      <span className={`text-xs ${theme.bodyTextColor}`}>
-                        Sayı #{3 - index}
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className={`text-xl font-semibold mb-3 ${theme.titleColor}`}>
-                    {issue.title}
-                  </h3>
-                  <p className={`${theme.bodyTextColor} leading-relaxed mb-4`}>
-                    {issue.summary}
+              {/* Loading State */}
+              {newslettersLoading && (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto"></div>
+                  <p className={`mt-2 ${theme.bodyTextColor}`}>Bültenler yükleniyor...</p>
+                </div>
+              )}
+
+              {/* Error State */}
+              {newslettersError && (
+                <div className="text-center py-8">
+                  <p className={`text-red-600 dark:text-red-400`}>
+                    Bültenler yüklenirken bir hata oluştu: {newslettersError}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {issue.tags.map((tag, tagIndex) => (
-                      <span 
-                        key={tagIndex}
-                        className={`px-2 py-1 text-xs rounded-full bg-emerald-100 dark:bg-emerald-900/30 ${theme.bodyTextColor}`}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              ))}
+                </div>
+              )}
+
+              {/* Newsletter Content */}
+              {!newslettersLoading && !newslettersError && newsletters.slice(0, 3).map((newsletter, index) => {
+                const dateObj = new Date(newsletter.published_date);
+                const formattedDate = dateObj.toLocaleDateString('tr-TR', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                });
+                
+                return (
+                  <article 
+                    key={newsletter.id}
+                    className={`${theme.cardBorder} ${theme.cardBg} border rounded-xl p-6 hover:shadow-lg transition-shadow duration-300`}
+                    id={`newsletter-${newsletter.id}`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                      <time className={`text-sm font-medium ${theme.dateColor}`}>
+                        {formattedDate}
+                      </time>
+                      <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                        <span className={`text-xs ${theme.bodyTextColor}`}>
+                          Sayı #{newsletters.length - index}
+                        </span>
+                      </div>
+                    </div>
+                    <h3 className={`text-xl font-semibold mb-3 ${theme.titleColor}`}>
+                      {newsletter.title}
+                    </h3>
+                    <p className={`${theme.bodyTextColor} leading-relaxed mb-4`}>
+                      {newsletter.excerpt}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {newsletter.tags.map((tag, tagIndex) => (
+                        <span 
+                          key={tagIndex}
+                          className={`px-2 py-1 text-xs rounded-full bg-emerald-100 dark:bg-emerald-900/30 ${theme.bodyTextColor}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
 
             <div className={`${theme.formBg} rounded-2xl shadow-xl p-8 max-w-md mx-auto backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 mt-12`}>
