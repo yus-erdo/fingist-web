@@ -6,13 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEmailSubscription } from "@/hooks/useEmailSubscription";
 import { useNewsletterContent, NewsletterContent } from "@/hooks/useNewsletterContent";
-import { FormEvent, useRef, useEffect, useState } from "react";
+import { FormEvent, useRef, useEffect } from "react";
 import confetti from 'canvas-confetti';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Link from "next/link";
 
 const themes = {
   blue: {
@@ -107,9 +103,6 @@ export default function Home() {
   // Newsletter content hook
   const { newsletters, isLoading: newslettersLoading, error: newslettersError } = useNewsletterContent();
   
-  // Newsletter detail view state
-  const [selectedNewsletter, setSelectedNewsletter] = useState<NewsletterContent | null>(null);
-  
   // Form refs
   const mainFormRef = useRef<HTMLFormElement>(null);
   const bottomFormRef = useRef<HTMLFormElement>(null);
@@ -177,203 +170,7 @@ export default function Home() {
     }
   }, [messageType]);
 
-  // Newsletter Detail View Component
-  const NewsletterDetailView = ({ newsletter }: { newsletter: NewsletterContent }) => {
-    const dateObj = new Date(newsletter.published_date);
-    const formattedDate = dateObj.toLocaleDateString('tr-TR', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
 
-    return (
-      <div className={`min-h-screen ${theme.sectionBg}`}>
-        {/* Header with back button */}
-        <div className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedNewsletter(null)}
-                className="flex items-center gap-2"
-                id="back-button"
-              >
-                ← Geri Dön
-              </Button>
-              <div>
-                <h1 className={`text-lg font-semibold ${theme.titleColor}`}>FinGist</h1>
-                <p className={`text-sm ${theme.bodyTextColor}`}>Finansal AI Bülteni</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <article className={`${theme.cardBg} rounded-xl p-8 shadow-lg`}>
-            {/* Article Header */}
-            <header className="mb-8">
-              <div className="flex items-center gap-4 mb-4">
-                <time className={`text-sm font-medium ${theme.dateColor}`}>
-                  {formattedDate}
-                </time>
-                <div className="flex flex-wrap gap-2">
-                  {newsletter.tags.map((tag, index) => (
-                    <span 
-                      key={index}
-                      className={`px-2 py-1 text-xs rounded-full bg-emerald-100 dark:bg-emerald-900/30 ${theme.bodyTextColor}`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <h1 className={`text-3xl sm:text-4xl font-bold ${theme.titleColor} mb-4`}>
-                {newsletter.title}
-              </h1>
-              {newsletter.excerpt && (
-                <p className={`text-lg ${theme.subtitleColor} leading-relaxed`}>
-                  {newsletter.excerpt}
-                </p>
-              )}
-            </header>
-
-            {/* Article Content */}
-            <div className={`prose prose-lg max-w-none ${theme.bodyTextColor}`}>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
-                components={{
-                  code({ className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    const isInline = !match;
-                    
-                    return !isInline ? (
-                      <SyntaxHighlighter
-                        style={tomorrow as any}
-                        language={match[1]}
-                        PreTag="div"
-                      >
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code className={`${className} bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-sm`} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  h1: ({ children }) => (
-                    <h1 className={`text-2xl font-bold ${theme.titleColor} mt-8 mb-4`}>
-                      {children}
-                    </h1>
-                  ),
-                  h2: ({ children }) => (
-                    <h2 className={`text-xl font-semibold ${theme.titleColor} mt-6 mb-3`}>
-                      {children}
-                    </h2>
-                  ),
-                  h3: ({ children }) => (
-                    <h3 className={`text-lg font-semibold ${theme.titleColor} mt-4 mb-2`}>
-                      {children}
-                    </h3>
-                  ),
-                  p: ({ children }) => (
-                    <p className={`${theme.bodyTextColor} mb-4 leading-relaxed`}>
-                      {children}
-                    </p>
-                  ),
-                  ul: ({ children }) => (
-                    <ul className={`${theme.bodyTextColor} mb-4 ml-6 list-disc space-y-1`}>
-                      {children}
-                    </ul>
-                  ),
-                  ol: ({ children }) => (
-                    <ol className={`${theme.bodyTextColor} mb-4 ml-6 list-decimal space-y-1`}>
-                      {children}
-                    </ol>
-                  ),
-                  blockquote: ({ children }) => (
-                    <blockquote className={`border-l-4 border-emerald-500 pl-4 py-2 ${theme.cardBg} rounded-r-lg my-4`}>
-                      {children}
-                    </blockquote>
-                  ),
-                  a: ({ children, href }) => (
-                    <a 
-                      href={href} 
-                      className={`${theme.dateColor} hover:underline`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {children}
-                    </a>
-                  ),
-                }}
-              >
-                {newsletter.content}
-              </ReactMarkdown>
-            </div>
-          </article>
-
-          {/* Newsletter subscription CTA at bottom */}
-          <div className={`${theme.formBg} rounded-2xl shadow-xl p-8 max-w-md mx-auto backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 mt-12`}>
-            <h3 className={`text-xl font-semibold mb-2 ${theme.formTextColor}`}>
-              Böyle İçerikleri Kaçırmayın
-            </h3>
-            <p className={`text-sm ${theme.bodyTextColor} mb-6`}>
-              Her gün e-postanızda benzer analizler
-            </p>
-            <form 
-              className="space-y-4" 
-              id="detail-newsletter-signup"
-              ref={bottomFormRef}
-              onSubmit={handleBottomFormSubmit}
-            >
-              <Input
-                type="email" 
-                name="email"
-                placeholder="E-posta adresinizi girin"
-                className="w-full text-center text-lg h-12"
-                id="detail-email-input"
-                required
-                disabled={isLoading}
-              />
-              <Button 
-                type="submit" 
-                className={`w-full h-12 text-lg font-semibold ${theme.primaryButton}`}
-                id="detail-subscribe-button"
-                disabled={isLoading}
-              >
-                {isLoading ? "Kaydediliyor..." : "Ücretsiz Başla"}
-              </Button>
-            </form>
-            
-            {/* Success/Error Message */}
-            {message && (
-              <div className={`mt-4 p-3 rounded-lg text-sm text-center ${
-                messageType === 'success' 
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300' 
-                  : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-              }`}>
-                {message}
-              </div>
-            )}
-            
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
-              <p className={`text-sm ${theme.bodyTextColor}`}>
-                AI • Günlük • Ücretsiz
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // If a newsletter is selected, show the detail view
-  if (selectedNewsletter) {
-    return <NewsletterDetailView newsletter={selectedNewsletter} />;
-  }
 
   return (
     <>
@@ -584,12 +381,15 @@ export default function Home() {
                 });
                 
                 return (
-                  <article 
+                  <Link 
                     key={newsletter.id}
-                    className={`${theme.cardBorder} ${theme.cardBg} border rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:scale-[1.02] transform transition-transform`}
-                    id={`newsletter-${newsletter.id}`}
-                    onClick={() => setSelectedNewsletter(newsletter)}
+                    href={`/newsletter/${newsletter.slug}`}
+                    className="block"
                   >
+                    <article 
+                      className={`${theme.cardBorder} ${theme.cardBg} border rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:scale-[1.02] transform transition-transform`}
+                      id={`newsletter-${newsletter.id}`}
+                    >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                       <time className={`text-sm font-medium ${theme.dateColor}`}>
                         {formattedDate}
@@ -625,6 +425,7 @@ export default function Home() {
                       </div>
                     </div>
                   </article>
+                </Link>
                 );
               })}
             </div>

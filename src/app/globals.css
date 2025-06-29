@@ -120,3 +120,78 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom typography styles for newsletter content */
+@layer components {
+  .newsletter-content {
+    @apply leading-relaxed;
+  }
+  
+  .newsletter-content p {
+    @apply mb-4 leading-7;
+  }
+  
+  .newsletter-content ul {
+    @apply mb-6 space-y-2;
+  }
+  
+  .newsletter-content ol {
+    @apply mb-6 space-y-2;
+  }
+  
+  .newsletter-content li {
+    @apply leading-7;
+  }
+  
+  .newsletter-content h1 {
+    @apply text-2xl font-bold mt-8 mb-4 border-b pb-2;
+  }
+  
+  .newsletter-content h2 {
+    @apply text-xl font-semibold mt-6 mb-3;
+  }
+  
+  .newsletter-content h3 {
+    @apply text-lg font-semibold mt-4 mb-2;
+  }
+  
+  .newsletter-content blockquote {
+    @apply my-6 pl-6 py-4 border-l-4 rounded-r-lg italic;
+  }
+  
+  .newsletter-content code {
+    @apply px-1 py-0.5 rounded text-sm;
+  }
+  
+  .newsletter-content pre {
+    @apply my-4 p-4 rounded-lg overflow-x-auto;
+  }
+  
+  .newsletter-content table {
+    @apply w-full border-collapse my-6;
+  }
+  
+  .newsletter-content th,
+  .newsletter-content td {
+    @apply px-4 py-2 border;
+  }
+  
+  .newsletter-content th {
+    @apply font-semibold;
+  }
+  
+  /* Fix for long URLs breaking layout */
+  .newsletter-content a {
+    @apply break-words;
+  }
+  
+  /* Sources section specific styling */
+  .newsletter-content h3:has(+ div div[class*="bg-emerald-50"]) {
+    @apply text-base;
+  }
+  
+  /* Make sources section more compact */
+  .sources-section {
+    @apply text-sm leading-tight;
+  }
+}
