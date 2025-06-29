@@ -98,6 +98,27 @@ export default function Home() {
   return (
     <>
       <div className={`min-h-screen ${theme.heroGradient}`}>
+        {/* Theme Selector */}
+        <div className="fixed top-4 right-4 z-20 flex gap-2">
+          {(Object.keys(themes) as ColorTheme[]).map((themeKey) => (
+            <button
+              key={themeKey}
+              className={`w-8 h-8 rounded-full border-2 ${
+                currentTheme === themeKey ? 'border-white' : 'border-transparent'
+              }`}
+              style={{ 
+                backgroundColor: themeKey === 'blue' ? '#3b82f6' : 
+                                themeKey === 'warm' ? '#f97316' : 
+                                themeKey === 'nature' ? '#10b981' : 
+                                '#8b5cf6' 
+              }}
+              onClick={() => setCurrentTheme(themeKey)}
+              aria-label={`Switch to ${themes[themeKey].name} theme`}
+              id={`theme-selector-${themeKey}`}
+            />
+          ))}
+        </div>
+
         {/* Hero Section */}
         <section className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
           {/* Background Orb */}
