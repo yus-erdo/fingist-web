@@ -4,6 +4,8 @@ import Orb from "@/components/ui/orb";
 import RotatingText from "@/components/ui/rotatingText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useEmailSubscription } from "@/hooks/useEmailSubscription";
+import { FormEvent, useRef } from "react";
 
 const themes = {
   blue: {
@@ -91,6 +93,28 @@ const themes = {
 export default function Home() {
   // Fixed theme set to 'nature' (green)
   const theme = themes.nature;
+  
+  // Email subscription hook
+  const { isLoading, message, messageType, subscribe, clearMessage } = useEmailSubscription();
+  
+  // Form refs
+  const mainFormRef = useRef<HTMLFormElement>(null);
+  const bottomFormRef = useRef<HTMLFormElement>(null);
+  
+  // Form submission handlers
+  const handleMainFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    await subscribe(email, 'main');
+  };
+  
+  const handleBottomFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    await subscribe(email, 'bottom');
+  };
 
   return (
     <>
@@ -175,22 +199,42 @@ export default function Home() {
               <p className={`text-sm ${theme.bodyTextColor} mb-6`}>
                 Her gün e-postanızda finansal özet
               </p>
-              <form className="space-y-4" id="newsletter-signup">
+              <form 
+                className="space-y-4" 
+                id="newsletter-signup"
+                ref={mainFormRef}
+                onSubmit={handleMainFormSubmit}
+              >
                 <Input
                   type="email" 
+                  name="email"
                   placeholder="E-posta adresinizi girin"
                   className="w-full text-center text-lg h-12"
                   id="email-input"
                   required
+                  disabled={isLoading}
                 />
                 <Button 
                   type="submit" 
                   className={`w-full h-12 text-lg font-semibold ${theme.primaryButton}`}
                   id="subscribe-button"
+                  disabled={isLoading}
                 >
-                  Ücretsiz Başla
+                  {isLoading ? "Kaydediliyor..." : "Ücretsiz Başla"}
                 </Button>
               </form>
+              
+              {/* Success/Error Message */}
+              {message && (
+                <div className={`mt-4 p-3 rounded-lg text-sm text-center ${
+                  messageType === 'success' 
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300' 
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                }`}>
+                  {message}
+                </div>
+              )}
+              
               <div className="flex items-center justify-center gap-2 mt-4">
                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
                 <p className={`text-sm ${theme.bodyTextColor}`}>
@@ -317,22 +361,42 @@ export default function Home() {
               <p className={`text-sm ${theme.bodyTextColor} mb-6`}>
                 Binlerce akıllı yatırımcıya katılın
               </p>
-              <form className="space-y-4" id="bottom-newsletter-signup">
+              <form 
+                className="space-y-4" 
+                id="bottom-newsletter-signup"
+                ref={bottomFormRef}
+                onSubmit={handleBottomFormSubmit}
+              >
                 <Input
                   type="email" 
+                  name="email"
                   placeholder="E-posta adresinizi girin"
                   className="w-full text-center text-lg h-12"
                   id="bottom-email-input"
                   required
+                  disabled={isLoading}
                 />
                 <Button 
                   type="submit" 
                   className={`w-full h-12 text-lg font-semibold ${theme.primaryButton}`}
                   id="bottom-subscribe-button"
+                  disabled={isLoading}
                 >
-                  Ücretsiz Başla
+                  {isLoading ? "Kaydediliyor..." : "Ücretsiz Başla"}
                 </Button>
               </form>
+              
+              {/* Success/Error Message */}
+              {message && (
+                <div className={`mt-4 p-3 rounded-lg text-sm text-center ${
+                  messageType === 'success' 
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300' 
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                }`}>
+                  {message}
+                </div>
+              )}
+              
               <div className="flex items-center justify-center gap-2 mt-4">
                 <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
                 <p className={`text-sm ${theme.bodyTextColor}`}>
