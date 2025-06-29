@@ -5,6 +5,7 @@ export class EmailRepository {
 
   /**
    * Subscribe a new email to the newsletter
+   * Secure version that only uses INSERT operations
    */
   async subscribe(email: string, source: 'main' | 'bottom' = 'main'): Promise<{
     success: boolean
@@ -12,58 +13,37 @@ export class EmailRepository {
     data?: EmailSubscription
   }> {
     try {
-      // First check if email already exists
-      const { data: existingEmail, error: checkError } = await supabase
-        .from(this.tableName)
-        .select('email, is_active')
-        .eq('email', email.toLowerCase().trim())
-        .single()
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        // PGRST116 is "no rows returned" which is expected for new emails
-        console.error('Error checking existing email:', checkError)
+      // Additional client-side validation for security
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      if (!emailRegex.test(email)) {
         return {
           success: false,
-          message: 'Bir hata oluştu. Lütfen tekrar deneyin.'
+          message: 'Geçerli bir e-posta adresi formatı girin.'
         }
       }
 
-      if (existingEmail) {
-        if (existingEmail.is_active) {
-          return {
-            success: false,
-            message: 'Bu e-posta adresi zaten kayıtlı.'
-          }
-        } else {
-          // Reactivate existing subscription
-          const { data, error: updateError } = await supabase
-            .from(this.tableName)
-            .update({ is_active: true })
-            .eq('email', email.toLowerCase().trim())
-            .select()
-
-          if (updateError) {
-            console.error('Error reactivating subscription:', updateError)
-            return {
-              success: false,
-              message: 'Bir hata oluştu. Lütfen tekrar deneyin.'
-            }
-          }
-
-          return {
-            success: true,
-            message: 'Aboneliğiniz yeniden aktifleştirildi!',
-            data: data[0]
-          }
+      if (email.length > 320) {
+        return {
+          success: false,
+          message: 'E-posta adresi çok uzun.'
         }
       }
 
-      // Insert new subscription
+      // Check for obvious spam patterns
+      const cleanEmail = email.toLowerCase().trim();
+      if (cleanEmail.includes('test@test') || cleanEmail.includes('spam@')) {
+        return {
+          success: false,
+          message: 'Geçersiz e-posta adresi.'
+        }
+      }
+
+      // Direct insert - let the database handle duplicates and validation
       const { data, error } = await supabase
         .from(this.tableName)
         .insert([
           {
-            email: email.toLowerCase().trim(),
+            email: cleanEmail,
             source: source,
             is_active: true
           }
@@ -72,16 +52,41 @@ export class EmailRepository {
 
       if (error) {
         console.error('Error inserting email subscription:', error)
-        return {
-          success: false,
-          message: 'Bir hata oluştu. Lütfen tekrar deneyin.'
+        
+        // Handle specific error cases
+        if (error.code === '23505') {
+          // Unique constraint violation - email already exists
+          return {
+            success: false,
+            message: 'Bu e-posta adresi zaten kayıtlı.'
+          }
+        } else if (error.message?.includes('Rate limit exceeded')) {
+          return {
+            success: false,
+            message: 'Çok sık kayıt denemesi yapıldı. Lütfen bir süre bekleyin.'
+          }
+        } else if (error.message?.includes('Invalid email')) {
+          return {
+            success: false,
+            message: 'Geçersiz e-posta adresi formatı.'
+          }
+        } else if (error.code === '42501') {
+          return {
+            success: false,
+            message: 'Güvenlik hatası. Lütfen sayfayı yenileyin ve tekrar deneyin.'
+          }
+        } else {
+          return {
+            success: false,
+            message: 'Bir hata oluştu. Lütfen tekrar deneyin.'
+          }
         }
       }
 
       return {
         success: true,
         message: 'Başarıyla kaydoldunuz! İlk bülteniniz yakında e-postanızda olacak.',
-        data: data[0]
+        data: data?.[0]
       }
     } catch (error) {
       console.error('Unexpected error:', error)
@@ -93,54 +98,28 @@ export class EmailRepository {
   }
 
   /**
-   * Get all active subscriptions
+   * Get all active subscriptions - DEPRECATED for security
+   * This method is no longer available for client-side access
+   * Admin operations must be handled server-side
    */
   async getActiveSubscriptions(): Promise<EmailSubscription[]> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching active subscriptions:', error)
-      return []
-    }
-
-    return data || []
+    console.warn('getActiveSubscriptions is deprecated for security reasons. Use server-side admin functions.');
+    return [];
   }
 
   /**
-   * Unsubscribe an email
+   * Unsubscribe an email - DEPRECATED for security  
+   * This method is no longer available for client-side access
+   * Unsubscribe operations must be handled server-side with proper authentication
    */
   async unsubscribe(email: string): Promise<{
     success: boolean
     message: string
   }> {
-    try {
-      const { error } = await supabase
-        .from(this.tableName)
-        .update({ is_active: false })
-        .eq('email', email.toLowerCase().trim())
-
-      if (error) {
-        console.error('Error unsubscribing:', error)
-        return {
-          success: false,
-          message: 'Abonelik iptal edilirken bir hata oluştu.'
-        }
-      }
-
-      return {
-        success: true,
-        message: 'Aboneliğiniz başarıyla iptal edildi.'
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error)
-      return {
-        success: false,
-        message: 'Beklenmeyen bir hata oluştu.'
-      }
+    console.warn('Client-side unsubscribe is deprecated for security reasons. Use server-side unsubscribe with proper token verification.');
+    return {
+      success: false,
+      message: 'Abonelik iptali için lütfen e-postanızdaki linkı kullanın.'
     }
   }
 }
