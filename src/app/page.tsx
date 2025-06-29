@@ -5,7 +5,7 @@ import RotatingText from "@/components/ui/rotatingText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEmailSubscription } from "@/hooks/useEmailSubscription";
-import { useNewsletterContent, NewsletterContent } from "@/hooks/useNewsletterContent";
+import { useNewsletterContent } from "@/hooks/useNewsletterContent";
 import { FormEvent, useRef, useEffect } from "react";
 import confetti from 'canvas-confetti';
 import Link from "next/link";
@@ -98,7 +98,7 @@ export default function Home() {
   const theme = themes.nature;
   
   // Email subscription hook
-  const { isLoading, message, messageType, subscribe, clearMessage } = useEmailSubscription();
+  const { isLoading, message, messageType, subscribe } = useEmailSubscription();
   
   // Newsletter content hook
   const { newsletters, isLoading: newslettersLoading, error: newslettersError } = useNewsletterContent();

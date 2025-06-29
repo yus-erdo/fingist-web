@@ -128,13 +128,13 @@ export default function NewsletterPage({ newsletter }: NewsletterPageProps) {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
               components={{
-                code({ className, children, ...props }: any) {
+                code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   const isInline = !match;
                   
                   return !isInline ? (
                     <SyntaxHighlighter
-                      style={tomorrow as any}
+                      style={tomorrow as Record<string, React.CSSProperties>}
                       language={match[1]}
                       PreTag="div"
                     >
@@ -157,7 +157,7 @@ export default function NewsletterPage({ newsletter }: NewsletterPageProps) {
                     {children}
                   </h2>
                 ),
-                h3: ({ children, ...props }) => {
+                h3: ({ children }) => {
                   const childrenString = String(children).toLowerCase();
                   const isSourcesSection = childrenString.includes('kaynak');
                   
@@ -179,13 +179,16 @@ export default function NewsletterPage({ newsletter }: NewsletterPageProps) {
                     </h3>
                   );
                 },
-                p: ({ children, ...props }) => {
+                p: ({ children }) => {
                   // Convert children to string to check for numbered sources
                   const childrenArray = React.Children.toArray(children);
                   const textContent = childrenArray.map(child => {
                     if (typeof child === 'string') return child;
-                    if (React.isValidElement(child) && child.props.children) {
-                      return String(child.props.children);
+                    if (React.isValidElement(child)) {
+                      const props = child.props as { children?: React.ReactNode };
+                      if (props.children) {
+                        return String(props.children);
+                      }
                     }
                     return '';
                   }).join('');
@@ -197,8 +200,7 @@ export default function NewsletterPage({ newsletter }: NewsletterPageProps) {
                   if (hasMultipleNumberedSources) {
                     // Split content by numbered sources and create separate lines
                     const parts = [];
-                    let remainingContent = textContent;
-                    let currentIndex = 0;
+                    // Parse numbered sources and split into separate lines
                     
                     // Find all numbered source positions
                     const sourcePattern = /(\[\d+\][^[]*?)(?=\[\d+\]|$)/g;
@@ -307,12 +309,12 @@ export default function NewsletterPage({ newsletter }: NewsletterPageProps) {
                 ),
                 blockquote: ({ children }) => (
                   <blockquote className={`border-l-4 border-emerald-500 pl-6 py-4 my-6 ${theme.cardBg} rounded-r-lg bg-emerald-50 dark:bg-emerald-900/20 italic`}>
-                    <span className="text-emerald-600 dark:text-emerald-400 text-2xl">"</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 text-2xl">&ldquo;</span>
                     {children}
-                    <span className="text-emerald-600 dark:text-emerald-400 text-2xl">"</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 text-2xl">&rdquo;</span>
                   </blockquote>
                 ),
-                a: ({ children, href, ...props }) => {
+                a: ({ children, href }) => {
                   const childText = String(children);
                   
                   // Enhanced citation formatting for numbered citations like [1], [2], etc.

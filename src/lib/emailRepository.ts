@@ -7,7 +7,7 @@ export class EmailRepository {
    * Subscribe a new email to the newsletter
    * Secure version that only uses INSERT operations
    */
-  async subscribe(email: string, source: 'main' | 'bottom' = 'main'): Promise<{
+  async subscribe(email: string, source: 'main' | 'bottom' | 'newsletter' = 'main'): Promise<{
     success: boolean
     message: string
     data?: EmailSubscription
@@ -112,7 +112,8 @@ export class EmailRepository {
    * This method is no longer available for client-side access
    * Unsubscribe operations must be handled server-side with proper authentication
    */
-  async unsubscribe(email: string): Promise<{
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async unsubscribe(_email: string): Promise<{
     success: boolean
     message: string
   }> {

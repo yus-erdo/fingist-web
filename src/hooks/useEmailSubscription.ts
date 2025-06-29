@@ -5,7 +5,7 @@ interface UseEmailSubscriptionResult {
   isLoading: boolean
   message: string
   messageType: 'success' | 'error' | ''
-  subscribe: (email: string, source?: 'main' | 'bottom') => Promise<void>
+  subscribe: (email: string, source?: 'main' | 'bottom' | 'newsletter') => Promise<void>
   clearMessage: () => void
 }
 
@@ -19,7 +19,7 @@ export const useEmailSubscription = (): UseEmailSubscriptionResult => {
     return emailRegex.test(email)
   }
 
-  const subscribe = async (email: string, source: 'main' | 'bottom' = 'main') => {
+  const subscribe = async (email: string, source: 'main' | 'bottom' | 'newsletter' = 'main') => {
     setIsLoading(true)
     setMessage('')
     setMessageType('')
@@ -46,7 +46,12 @@ export const useEmailSubscription = (): UseEmailSubscriptionResult => {
 
       // Clear form on success
       if (result.success) {
-        const formId = source === 'main' ? 'newsletter-signup' : 'bottom-newsletter-signup'
+        let formId = 'newsletter-signup'
+        if (source === 'bottom') {
+          formId = 'bottom-newsletter-signup'
+        } else if (source === 'newsletter') {
+          formId = 'newsletter-signup-form'
+        }
         const form = document.getElementById(formId) as HTMLFormElement
         if (form) {
           form.reset()
